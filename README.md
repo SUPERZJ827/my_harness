@@ -1,5 +1,7 @@
 # DataSciBench Public Snapshot
 
+Chinese version: [README_ZH.md](README_ZH.md)
+
 This repository is a cleaned public snapshot of a modified `DataSciBench + MetaGPT` workflow.
 
 The goal of this public version is simple:
