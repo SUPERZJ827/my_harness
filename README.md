@@ -23,7 +23,7 @@ This public snapshot currently includes one lightweight sample task, `data/human
 - `role/`, `src/`, `utils/`: core project logic
 - `metric/`: evaluation configs
 - `data/human_0/`: a small sample task for smoke testing
-- `docs/`: notes and experiment writeups
+- `docs/`: selected operational notes for public users
 
 ## What is intentionally not included
 
