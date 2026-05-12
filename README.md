@@ -2,6 +2,8 @@
 
 Chinese version: [README_ZH.md](README_ZH.md)
 
+Local modifications summary: [docs/local_modifications.md](docs/local_modifications.md)
+
 This repository is a cleaned public snapshot of a modified `DataSciBench + MetaGPT` workflow.
 
 The goal of this public version is simple:

@@ -1,5 +1,7 @@
 # DataSciBench 公开仓库说明
 
+本地修改说明： [docs/local_modifications.md](docs/local_modifications.md)
+
 这是一个经过清理后的 `DataSciBench + MetaGPT` 本地修改版公开快照。
 
 这个公开版本的目标很明确：
