@@ -74,6 +74,8 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+根目录 `requirements.txt` 现在已经按维护者本地 `/home/zhoujun/DataSciBench/harness` 环境锁定版本，依赖解析会比原先的宽松写法更稳定。
+
 ### 4. 安装仓库内自带的本地 MetaGPT
 
 这个项目依赖当前仓库里的 `MetaGPT/` 源码，不建议随意替换成其他环境里的 MetaGPT。
@@ -83,6 +85,8 @@ cd MetaGPT
 pip install .
 cd ..
 ```
+
+同时，`MetaGPT/requirements.txt` 也已经按照维护者当前 `harness` 环境的实际版本做了锁定。
 
 ### 5. 创建运行配置文件
 

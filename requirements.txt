@@ -1,14 +1,21 @@
-seaborn
-metagpt
-imbalanced-learn
-reportlab
-wandb
-textdistance
-gensim
-nltk
-tensorflow
-datasets
-jellyfish
-scikit-image
-pydot
-PyPDF2
+# Pinned from the maintainer's working environment:
+# /home/zhoujun/DataSciBench/harness
+#
+# Note:
+# - Do not install `metagpt` from PyPI here.
+# - Install the local fork with:
+#     cd MetaGPT && pip install . && cd ..
+
+seaborn==0.13.2
+imbalanced-learn==0.13.0
+reportlab==4.4.10
+wandb==0.26.1
+textdistance==4.6.3
+gensim==4.4.0
+nltk==3.9.4
+tensorflow==2.19.1
+datasets==2.19.2
+jellyfish==1.2.1
+scikit-image==0.25.2
+pydot==4.0.1
+PyPDF2==3.0.1

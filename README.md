@@ -76,6 +76,8 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+The root `requirements.txt` is pinned from the maintainer's working environment under `/home/zhoujun/DataSciBench/harness`, so dependency resolution should be more stable than a loosely specified setup.
+
 ### 4. Install the local MetaGPT fork from this repository
 
 This project uses the local `MetaGPT/` source tree, not a random external install.
@@ -85,6 +87,8 @@ cd MetaGPT
 pip install .
 cd ..
 ```
+
+`MetaGPT/requirements.txt` has also been pinned to the versions currently used in the maintainer's `harness` environment.
 
 ### 5. Create the runtime config file
 
