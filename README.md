@@ -186,6 +186,189 @@ There may also be an aggregated output file like:
 results/human_0/deepseek-v4-flash__full_tame_outputs.jsonl
 ```
 
+## Data preparation and ground-truth layout
+
+This is the part that usually causes the most confusion.
+
+In this project, a runnable task is not just a prompt. A task normally needs three things:
+
+1. a task folder under `data/`
+2. a matching metric folder under `metric/`
+3. ground-truth files under `data/<task_id>/gt/`
+
+### Minimal directory contract for one task
+
+For a task called `human_0`, the expected layout is:
+
+```text
+data/
+  human_0/
+    prompt.json
+    data.csv                  # optional, if the task needs input files
+    other_input_file.ext      # optional
+    gt/
+      expected_output.ext
+      test_gt.py              # optional, depends on the task
+
+metric/
+  human_0/
+    metric.yaml
+```
+
+### What each file is for
+
+`data/<task_id>/prompt.json`
+: The task definition. This is required. It contains at least the task prompt, and often also a `data_source_type` field used for filtering.
+
+`data/<task_id>/...`
+: The input files that will be staged into the run directory before generation starts. These can be `.csv`, `.xlsx`, `.xls`, `.json`, `.txt`, `.md`, `.parquet`, image files, `.npy`, `.pkl`, `.h5`, `.pth`, and a few other supported formats.
+
+`data/<task_id>/gt/`
+: The ground-truth directory used during evaluation.
+
+`metric/<task_id>/metric.yaml`
+: The evaluation config that tells the evaluator what checks to run and which files inside `gt/` should be treated as ground truth.
+
+### How ground-truth resolution works
+
+During evaluation, the code treats:
+
+```text
+data/<task_id>/gt/
+```
+
+as the base ground-truth directory.
+
+Then each metric entry in `metric/<task_id>/metric.yaml` can point to a file relative to that directory.
+
+For example, if `metric.yaml` contains:
+
+```yaml
+ground_truth: most_corr_output.csv
+```
+
+then the evaluator will resolve it as:
+
+```text
+data/human_0/gt/most_corr_output.csv
+```
+
+So the practical rule is:
+
+- put real reference outputs inside `data/<task_id>/gt/`
+- in `metric.yaml`, write paths relative to `gt/`
+
+### Concrete example from the included sample task
+
+The sample task in this repo is:
+
+```text
+data/human_0/
+  prompt.json
+  data.csv
+  gt/
+    most_corr_output.csv
+    test_gt.py
+
+metric/human_0/
+  metric.yaml
+```
+
+The corresponding `metric.yaml` references:
+
+```yaml
+ground_truth: most_corr_output.csv
+```
+
+which means evaluation will read:
+
+```text
+data/human_0/gt/most_corr_output.csv
+```
+
+### Required files for different use cases
+
+Case 1: prompt-only task with no external input files
+
+Minimum:
+
+```text
+data/<task_id>/prompt.json
+data/<task_id>/gt/<expected_output>
+metric/<task_id>/metric.yaml
+```
+
+Case 2: task with input files such as CSV / Excel
+
+Minimum:
+
+```text
+data/<task_id>/prompt.json
+data/<task_id>/input_file.csv
+data/<task_id>/gt/<expected_output>
+metric/<task_id>/metric.yaml
+```
+
+Case 3: task with custom evaluation code
+
+Often includes:
+
+```text
+data/<task_id>/gt/test_gt.py
+metric/<task_id>/metric.yaml
+```
+
+### How to prepare more tasks manually
+
+If you want to extend this public snapshot with more tasks, the safest workflow is:
+
+1. create `data/<task_id>/`
+2. place `prompt.json` there
+3. place all required input files in the same task directory
+4. create `data/<task_id>/gt/`
+5. place the expected output files used by evaluation inside `gt/`
+6. create `metric/<task_id>/metric.yaml`
+7. make sure every `ground_truth:` entry in `metric.yaml` points to a file relative to `data/<task_id>/gt/`
+
+### How to import the full benchmark dataset
+
+This public repo does not ship the full dataset. If you download the full benchmark yourself, your goal is to reconstruct the same logical structure:
+
+```text
+data/<task_id>/...
+metric/<task_id>/metric.yaml
+data/<task_id>/gt/...
+```
+
+In practice:
+
+1. download the original benchmark task folders
+2. copy each task folder into `data/`
+3. ensure the corresponding metric folder exists under `metric/`
+4. ensure each task has a usable `gt/` directory
+
+### Common data-preparation mistakes
+
+Mistake 1:
+
+- putting the reference output under `data/<task_id>/` instead of `data/<task_id>/gt/`
+
+Mistake 2:
+
+- writing an absolute path in `metric.yaml` instead of a path relative to `gt/`
+
+Mistake 3:
+
+- copying the prompt but forgetting the input data files
+
+Mistake 4:
+
+- having `data/<task_id>/` but no matching `metric/<task_id>/metric.yaml`
+
+Mistake 5:
+
+- using a task id under `data/` that does not exactly match the folder name under `metric/`
+
 ## Main command reference
 
 ### 1. Generation: `python -m experiments.run_examples`

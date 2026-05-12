@@ -184,6 +184,189 @@ results/human_0/deepseek-v4-flash__full_tame_0/
 results/human_0/deepseek-v4-flash__full_tame_outputs.jsonl
 ```
 
+## 数据准备与 gt 目录规范
+
+这一部分通常才是最容易把人卡住的地方。
+
+在这个项目里，一个可运行任务不只是一个 prompt，而通常需要同时具备三部分：
+
+1. `data/` 下的任务目录
+2. `metric/` 下同名的评测目录
+3. `data/<task_id>/gt/` 下的真值文件
+
+### 单个任务最小目录规范
+
+假设任务叫 `human_0`，推荐目录结构如下：
+
+```text
+data/
+  human_0/
+    prompt.json
+    data.csv                  # 如果任务依赖输入数据，就放这里
+    other_input_file.ext      # 其他输入文件，可选
+    gt/
+      expected_output.ext
+      test_gt.py              # 可选，取决于评测方式
+
+metric/
+  human_0/
+    metric.yaml
+```
+
+### 每一类文件分别是干什么的
+
+`data/<task_id>/prompt.json`
+: 任务定义文件。这个是必须的。里面至少要有任务 prompt，很多时候还会带 `data_source_type` 字段，供筛选任务时使用。
+
+`data/<task_id>/...`
+: 任务输入文件。运行时，脚本会把这些文件拷贝到实际运行目录中。支持的输入文件包括 `.csv`、`.xlsx`、`.xls`、`.json`、`.txt`、`.md`、`.parquet`、图片、`.npy`、`.pkl`、`.h5`、`.pth` 等。
+
+`data/<task_id>/gt/`
+: 真值目录。评测时会把这里当作 ground truth 基目录。
+
+`metric/<task_id>/metric.yaml`
+: 评测配置文件。它定义了具体要跑哪些 metric，以及这些 metric 要去 `gt/` 目录下找哪些真值文件。
+
+### ground truth 是怎么解析的
+
+评测时，代码会把：
+
+```text
+data/<task_id>/gt/
+```
+
+当作 ground truth 根目录。
+
+然后 `metric/<task_id>/metric.yaml` 里的每个 metric 都可以写一个相对于这个目录的文件名。
+
+例如，如果 `metric.yaml` 里写的是：
+
+```yaml
+ground_truth: most_corr_output.csv
+```
+
+那么评测器最终去找的就是：
+
+```text
+data/human_0/gt/most_corr_output.csv
+```
+
+所以实际规则很简单：
+
+- 真值文件统一放在 `data/<task_id>/gt/`
+- `metric.yaml` 里的 `ground_truth` 写相对于 `gt/` 的路径
+
+### 当前仓库内置示例任务的真实对应关系
+
+这个仓库自带的示例任务是：
+
+```text
+data/human_0/
+  prompt.json
+  data.csv
+  gt/
+    most_corr_output.csv
+    test_gt.py
+
+metric/human_0/
+  metric.yaml
+```
+
+而它对应的 `metric.yaml` 里会写：
+
+```yaml
+ground_truth: most_corr_output.csv
+```
+
+这就表示评测时会读取：
+
+```text
+data/human_0/gt/most_corr_output.csv
+```
+
+### 不同类型任务至少需要什么文件
+
+情况 1：纯 prompt 任务，没有额外输入文件
+
+最少需要：
+
+```text
+data/<task_id>/prompt.json
+data/<task_id>/gt/<expected_output>
+metric/<task_id>/metric.yaml
+```
+
+情况 2：依赖 CSV / Excel 等输入数据的任务
+
+最少需要：
+
+```text
+data/<task_id>/prompt.json
+data/<task_id>/input_file.csv
+data/<task_id>/gt/<expected_output>
+metric/<task_id>/metric.yaml
+```
+
+情况 3：使用自定义评测脚本的任务
+
+通常还会带：
+
+```text
+data/<task_id>/gt/test_gt.py
+metric/<task_id>/metric.yaml
+```
+
+### 如果你要手动新增任务，推荐流程
+
+最稳妥的做法是：
+
+1. 新建 `data/<task_id>/`
+2. 放入 `prompt.json`
+3. 把该任务所需的所有输入文件放进这个目录
+4. 新建 `data/<task_id>/gt/`
+5. 把评测会用到的标准输出文件放进 `gt/`
+6. 新建 `metric/<task_id>/metric.yaml`
+7. 确保 `metric.yaml` 中每个 `ground_truth:` 都是相对于 `data/<task_id>/gt/` 的路径
+
+### 如果你要接入完整 benchmark 数据
+
+这个公开仓库默认不自带完整数据集。你自己下载完整 benchmark 之后，目标就是把目录恢复成同样的逻辑结构：
+
+```text
+data/<task_id>/...
+metric/<task_id>/metric.yaml
+data/<task_id>/gt/...
+```
+
+实际操作建议：
+
+1. 下载原始 benchmark 任务目录
+2. 把每个任务目录复制到 `data/`
+3. 确保 `metric/` 下有对应同名目录
+4. 确保每个任务都有可用的 `gt/` 目录
+
+### 数据准备里最常见的错误
+
+错误 1：
+
+- 把真值文件放在了 `data/<task_id>/` 根目录，而不是 `data/<task_id>/gt/`
+
+错误 2：
+
+- 在 `metric.yaml` 里写了绝对路径，而不是相对于 `gt/` 的路径
+
+错误 3：
+
+- 只复制了 prompt，没有复制对应的输入数据文件
+
+错误 4：
+
+- 有 `data/<task_id>/`，但是没有 `metric/<task_id>/metric.yaml`
+
+错误 5：
+
+- `data/` 和 `metric/` 里的任务目录名不完全一致
+
 ## 主命令说明
 
 ### 1. 生成：`python -m experiments.run_examples`
