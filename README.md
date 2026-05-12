@@ -70,15 +70,7 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 ```
 
-### 3. Install project dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-The root `requirements.txt` is pinned from the maintainer's working environment under `/home/zhoujun/DataSciBench/harness`, so dependency resolution should be more stable than a loosely specified setup.
-
-### 4. Install the local MetaGPT fork from this repository
+### 3. Install the local MetaGPT fork from this repository
 
 This project uses the local `MetaGPT/` source tree, not a random external install.
 
@@ -90,7 +82,31 @@ cd ..
 
 `MetaGPT/requirements.txt` has also been pinned to the versions currently used in the maintainer's `harness` environment.
 
-### 5. Create the runtime config file
+### 4. Data
+
+In the original DataSciBench workflow, processed prompts are stored under:
+
+```text
+data/<task_id>/
+```
+
+This public snapshot only keeps a lightweight sample task:
+
+```text
+data/human_0/
+```
+
+If you want to run more tasks, see the dataset import section later in this README.
+
+### 5. Install project dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+The root `requirements.txt` is pinned from the maintainer's working environment under `/home/zhoujun/DataSciBench/harness`, so dependency resolution should be more stable than a loosely specified setup.
+
+### 6. Create the runtime config file
 
 Copy the example config:
 
@@ -118,7 +134,7 @@ Optional: if you also want a separate MetaGPT-side local example, this repo also
 
 - `MetaGPT/config/config2.example.local.yaml`
 
-### 6. Understand how `--config` is resolved
+### 7. Understand how `--config` is resolved
 
 When you pass `--config config2.yaml`, the code searches in roughly this order:
 

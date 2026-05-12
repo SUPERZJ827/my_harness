@@ -68,15 +68,7 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 ```
 
-### 3. 安装项目依赖
-
-```bash
-pip install -r requirements.txt
-```
-
-根目录 `requirements.txt` 现在已经按维护者本地 `/home/zhoujun/DataSciBench/harness` 环境锁定版本，依赖解析会比原先的宽松写法更稳定。
-
-### 4. 安装仓库内自带的本地 MetaGPT
+### 3. 安装仓库内自带的本地 MetaGPT
 
 这个项目依赖当前仓库里的 `MetaGPT/` 源码，不建议随意替换成其他环境里的 MetaGPT。
 
@@ -88,7 +80,31 @@ cd ..
 
 同时，`MetaGPT/requirements.txt` 也已经按照维护者当前 `harness` 环境的实际版本做了锁定。
 
-### 5. 创建运行配置文件
+### 4. 数据
+
+原始 DataSciBench 的组织方式里，处理后的 prompt 会放在：
+
+```text
+data/<task_id>/
+```
+
+这个公开快照目前只保留了一个轻量示例任务：
+
+```text
+data/human_0/
+```
+
+如果你想运行更多任务，请看本文后面的“完整数据导入”部分。
+
+### 5. 安装项目依赖
+
+```bash
+pip install -r requirements.txt
+```
+
+根目录 `requirements.txt` 现在已经按维护者本地 `/home/zhoujun/DataSciBench/harness` 环境锁定版本，依赖解析会比原先的宽松写法更稳定。
+
+### 6. 创建运行配置文件
 
 先从示例文件复制：
 
@@ -116,7 +132,7 @@ llm:
 
 - `MetaGPT/config/config2.example.local.yaml`
 
-### 6. `--config` 参数到底会去哪里找配置
+### 7. `--config` 参数到底会去哪里找配置
 
 当你传入 `--config config2.yaml` 时，代码大致会按以下顺序搜索：
 
