@@ -1,0 +1,91 @@
+{
+  "dsbench_da_ablation_30": [
+    "dsbench_da_00000001_question6",
+    "dsbench_da_00000001_question7",
+    "dsbench_da_00000001_question8",
+    "dsbench_da_00000001_question9",
+    "dsbench_da_00000001_question10",
+    "dsbench_da_00000001_question11",
+    "dsbench_da_00000001_question12",
+    "dsbench_da_00000001_question13",
+    "dsbench_da_00000001_question14",
+    "dsbench_da_00000001_question15",
+    "dsbench_da_00000004_question41",
+    "dsbench_da_00000004_question42",
+    "dsbench_da_00000004_question43",
+    "dsbench_da_00000004_question44",
+    "dsbench_da_00000004_question45",
+    "dsbench_da_00000004_question46",
+    "dsbench_da_00000004_question47",
+    "dsbench_da_00000004_question48",
+    "dsbench_da_00000004_question49",
+    "dsbench_da_00000004_question50",
+    "dsbench_da_00000010_question1",
+    "dsbench_da_00000010_question2",
+    "dsbench_da_00000010_question3",
+    "dsbench_da_00000010_question4",
+    "dsbench_da_00000010_question5",
+    "dsbench_da_00000010_question6",
+    "dsbench_da_00000010_question7",
+    "dsbench_da_00000010_question8",
+    "dsbench_da_00000010_question9",
+    "dsbench_da_00000010_question10"
+  ],
+  "dsbench_da_ablation_30_meta": {
+    "description": "30-question DSBench data-analysis ablation set spanning three workbook-heavy challenges. Chosen to balance mixed support files, later-step numeric reasoning, and a mix of MCQ and open answers.",
+    "size": 30,
+    "selection_notes": [
+      {
+        "challenge_id": "00000001",
+        "challenge_name": "2016-round-1-section-2-chip-off-the-old-block",
+        "reason": "Long quarterly project-modeling challenge; questions 6-15 stress repeated structured spreadsheet reasoning.",
+        "question_names": [
+          "question6",
+          "question7",
+          "question8",
+          "question9",
+          "question10",
+          "question11",
+          "question12",
+          "question13",
+          "question14",
+          "question15"
+        ]
+      },
+      {
+        "challenge_id": "00000004",
+        "challenge_name": "2017-round-1-go-with-the-flow",
+        "reason": "Mixed workbook + image + csv support; questions 41-50 require combining flow logic with workbook numbers.",
+        "question_names": [
+          "question41",
+          "question42",
+          "question43",
+          "question44",
+          "question45",
+          "question46",
+          "question47",
+          "question48",
+          "question49",
+          "question50"
+        ]
+      },
+      {
+        "challenge_id": "00000010",
+        "challenge_name": "2017-finals-ladder-up",
+        "reason": "Workbook task with mixed MCQ, free-text, and integer answers; useful for testing whether ablations handle format shifts.",
+        "question_names": [
+          "question1",
+          "question2",
+          "question3",
+          "question4",
+          "question5",
+          "question6",
+          "question7",
+          "question8",
+          "question9",
+          "question10"
+        ]
+      }
+    ]
+  }
+}

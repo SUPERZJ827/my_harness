@@ -1,0 +1,46 @@
+# Local environments
+venv/
+harness/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+
+# Editors and OS files
+.DS_Store
+.vscode/
+.idea/
+
+# Logs and runtime outputs
+logs/
+output/
+workspace/
+test.log
+*.log
+
+# Large experiment outputs
+results_*/
+results__*/
+results_dabstep/
+results_dsbench/
+evaluation_results/results/
+evaluation_results/*_results.csv
+evaluation_results/final_results.csv
+evaluation_results/bcb_results.csv
+evaluation_results/*_tmp.csv
+
+# Temporary datasets and caches
+hf_dataset_tmp/
+
+# Generated artifacts inside tasks
+data/**/gt/
+data/**/deepseek-v4-flash_*/
+data/**/*_outputs.jsonl
+
+# Local configuration with secrets
+config/config2.local.yaml
+MetaGPT/config/config2.local.yaml

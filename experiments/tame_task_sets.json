@@ -1,0 +1,41 @@
+{
+  "sanity_10": [
+    "human_22",
+    "csv_excel_39",
+    "csv_excel_32",
+    "csv_excel_2",
+    "csv_excel_48",
+    "human_8",
+    "human_12",
+    "human_7",
+    "dl_15",
+    "dl_31"
+  ],
+  "broad_20": [
+    "human_22",
+    "csv_excel_39",
+    "csv_excel_32",
+    "csv_excel_2",
+    "csv_excel_48",
+    "human_8",
+    "human_12",
+    "human_7",
+    "dl_15",
+    "dl_31",
+    "dl_0",
+    "dl_9",
+    "dl_16",
+    "human_10",
+    "human_11",
+    "human_17",
+    "human_5",
+    "csv_excel_33",
+    "csv_excel_4",
+    "human_24"
+  ],
+  "quick_debug_3": [
+    "human_22",
+    "csv_excel_39",
+    "csv_excel_32"
+  ]
+}

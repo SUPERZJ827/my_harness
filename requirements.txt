@@ -1,0 +1,14 @@
+seaborn
+metagpt
+imbalanced-learn
+reportlab
+wandb
+textdistance
+gensim
+nltk
+tensorflow
+datasets
+jellyfish
+scikit-image
+pydot
+PyPDF2
