@@ -255,6 +255,39 @@ List supported TAME variants:
 python -m experiments.run_examples --list_tame_variants
 ```
 
+High-parameter example close to a real experiment run:
+
+```bash
+python -m experiments.run_examples \
+  --task_id original_55 \
+  --max_runs 3 \
+  --data_type all \
+  --output_dir results_55tasks \
+  --tame_variant full_tame \
+  --max_retry 3 \
+  --tame_max_steps 20 \
+  --task-timeout-seconds 1800 \
+  --use_reflection \
+  --hard_retry \
+  --config config2.yaml
+```
+
+What this command does:
+
+- runs the predefined `original_55` task set
+- repeats each task 3 times
+- writes results under `results_55tasks/`
+- uses the `full_tame` preset
+- enables reflection and hard retry
+- overrides retry count and T+ step budget
+- aborts a single task if it exceeds 1800 seconds
+
+If you want a react-style variant of the same run, add:
+
+```bash
+--use_react
+```
+
 #### Parameters for `experiments.run_examples`
 
 `--task_id`
@@ -356,6 +389,16 @@ Skip VLM-based evaluation metrics:
 python -m experiments.evaluate \
   --task_id human_0 \
   --runs_dir results \
+  --model_id deepseek-v4-flash \
+  --skip_vlm
+```
+
+Matching evaluation command for the high-parameter run above:
+
+```bash
+python -m experiments.evaluate \
+  --task_id original_55 \
+  --runs_dir results_55tasks \
   --model_id deepseek-v4-flash \
   --skip_vlm
 ```
