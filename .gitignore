@@ -42,5 +42,7 @@ data/**/deepseek-v4-flash_*/
 data/**/*_outputs.jsonl
 
 # Local configuration with secrets
+config/config2.yaml
 config/config2.local.yaml
+MetaGPT/config/config2.yaml
 MetaGPT/config/config2.local.yaml

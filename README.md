@@ -44,10 +44,17 @@ cd ..
 
 ### 3. Configure your API key
 
-Edit one of these files and fill in your own key:
+Create a real config file from the example:
 
-- `config/config2.yaml`
-- `MetaGPT/config/config2.yaml`
+```bash
+cp config/config2.example.yaml config/config2.yaml
+```
+
+Then edit `config/config2.yaml` and fill in your own key.
+
+Optional: if you also want a local MetaGPT-side copy, create it from:
+
+- `MetaGPT/config/config2.example.local.yaml`
 
 Do not commit real keys to GitHub.
 

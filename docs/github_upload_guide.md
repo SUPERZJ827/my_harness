@@ -21,7 +21,7 @@ Example remote:
 - code directories: `MetaGPT/`, `experiments/`, `evaluations/`, `role/`, `src/`, `utils/`
 - docs: `README.md`, `docs/`
 - dependency file: `requirements.txt`
-- config template with placeholder API key
+- config example with placeholder API key
 - lightweight sample data only: `data/human_0/`
 - matching evaluation config: `metric/human_0/`
 
@@ -35,6 +35,7 @@ Example remote:
 - large benchmark task folders
 - `data/**/gt/` for the full benchmark snapshot
 - any real API keys
+- committed `config/config2.yaml`
 
 ## After Export
 
