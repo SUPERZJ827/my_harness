@@ -347,6 +347,179 @@ In practice:
 3. ensure the corresponding metric folder exists under `metric/`
 4. ensure each task has a usable `gt/` directory
 
+### Practical import workflow
+
+If you want a more operational checklist, use this process.
+
+Step 1: download the original task data
+
+- Download the benchmark task folders to a temporary directory first.
+- Do not immediately mix them into this repo before checking the layout.
+
+Step 2: inspect the downloaded folder structure
+
+Ideally the downloaded content already looks like:
+
+```text
+<download_root>/
+  human_0/
+  human_1/
+  csv_excel_0/
+  dl_0/
+  ...
+```
+
+For each task folder, verify at least:
+
+- `prompt.json` exists
+- input files such as `.csv`, `.xlsx`, `.json` exist when needed
+- `gt/` exists if the downloaded package already includes ground truth
+
+Step 3: copy task folders into `data/`
+
+After checking the layout, copy each task folder into:
+
+```text
+data/<task_id>/
+```
+
+Step 4: verify `metric/` has matching task ids
+
+For every task you want to run, confirm:
+
+```text
+metric/<task_id>/metric.yaml
+```
+
+exists.
+
+Step 5: verify each task has `gt/`
+
+For every imported task, check:
+
+```text
+data/<task_id>/gt/
+```
+
+If `gt/` is missing, generation may still run, but evaluation will not work correctly until the ground-truth files are added.
+
+Step 6: validate one task before validating the whole dataset
+
+Before launching a large run, pick one imported task and confirm:
+
+- `data/<task_id>/prompt.json` exists
+- required input files are present
+- `metric/<task_id>/metric.yaml` exists
+- `data/<task_id>/gt/` exists
+
+Step 7: run a single-task smoke test
+
+Example:
+
+```bash
+python -m experiments.run_examples \
+  --task_id human_1 \
+  --max_runs 1 \
+  --config config2.yaml \
+  --output_dir results_import_check
+```
+
+Then evaluate it:
+
+```bash
+python -m experiments.evaluate \
+  --task_id human_1 \
+  --runs_dir results_import_check \
+  --model_id deepseek-v4-flash
+```
+
+If one imported task works end to end, the rest of the dataset usually follows the same structure.
+
+### Suggested shell checks after importing data
+
+Count task folders under `data/`:
+
+```bash
+find data -mindepth 1 -maxdepth 1 -type d | wc -l
+```
+
+Count metric folders:
+
+```bash
+find metric -mindepth 1 -maxdepth 1 -type d | wc -l
+```
+
+Check which data tasks do not have matching metric folders:
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  name=$(basename "$d")
+  [ -f "metric/$name/metric.yaml" ] || echo "missing metric: $name"
+done
+```
+
+Check which tasks are missing `gt/`:
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  [ -d "$d/gt" ] || echo "missing gt: $(basename "$d")"
+done
+```
+
+Check which tasks are missing `prompt.json`:
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  [ -f "$d/prompt.json" ] || echo "missing prompt: $(basename "$d")"
+done
+```
+
+### If the downloaded dataset does not already contain `gt/`
+
+In that case, you need to reconstruct the evaluation layout manually:
+
+1. create `data/<task_id>/gt/`
+2. place the expected reference output files inside it
+3. update `metric/<task_id>/metric.yaml` so each `ground_truth:` entry points to the correct file relative to `gt/`
+
+Example:
+
+```text
+data/human_8/gt/final_report.csv
+metric/human_8/metric.yaml
+```
+
+and inside `metric.yaml`:
+
+```yaml
+ground_truth: final_report.csv
+```
+
+### If the downloaded dataset contains nested duplicate `gt/gt/`
+
+Some local snapshots may contain both:
+
+```text
+data/<task_id>/gt/
+data/<task_id>/gt/gt/
+```
+
+For this project, the evaluator uses:
+
+```text
+data/<task_id>/gt/
+```
+
+as the base directory.
+
+So the safer convention is:
+
+- keep the actual reference files directly under `data/<task_id>/gt/`
+- avoid depending on `gt/gt/` unless you intentionally changed `metric.yaml` paths to match it
+
 ### Common data-preparation mistakes
 
 Mistake 1:

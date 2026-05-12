@@ -345,6 +345,181 @@ data/<task_id>/gt/...
 3. 确保 `metric/` 下有对应同名目录
 4. 确保每个任务都有可用的 `gt/` 目录
 
+### 更偏操作手册的导入流程
+
+如果你希望按步骤执行，可以直接按下面这个流程来。
+
+第 1 步：先下载原始任务数据
+
+- 先把 benchmark 任务目录下载到一个临时目录
+- 不建议一下载完就直接混到当前仓库里
+
+第 2 步：先检查下载下来的目录结构
+
+理想情况下，下载内容应该接近：
+
+```text
+<download_root>/
+  human_0/
+  human_1/
+  csv_excel_0/
+  dl_0/
+  ...
+```
+
+对于每个任务目录，至少先确认：
+
+- 存在 `prompt.json`
+- 如果任务依赖输入数据，目录里有 `.csv` / `.xlsx` / `.json` 等文件
+- 如果下载包本身带真值，应该能看到 `gt/`
+
+第 3 步：把任务目录复制到 `data/`
+
+确认结构没问题之后，再把任务目录复制到：
+
+```text
+data/<task_id>/
+```
+
+第 4 步：确认 `metric/` 里有同名任务目录
+
+对于每个你想运行的任务，都必须确认：
+
+```text
+metric/<task_id>/metric.yaml
+```
+
+存在。
+
+第 5 步：检查每个任务有没有 `gt/`
+
+对于每个导入任务，都检查：
+
+```text
+data/<task_id>/gt/
+```
+
+是否存在。
+
+如果没有 `gt/`，生成流程可能还能跑，但评测流程通常无法正确工作，除非你后面自己补齐真值文件。
+
+第 6 步：先抽一个任务做完整检查
+
+不要一上来就直接跑全量。先挑一个任务，确认：
+
+- `data/<task_id>/prompt.json` 存在
+- 输入文件都在
+- `metric/<task_id>/metric.yaml` 存在
+- `data/<task_id>/gt/` 存在
+
+第 7 步：先做单任务 smoke test
+
+例如：
+
+```bash
+python -m experiments.run_examples \
+  --task_id human_1 \
+  --max_runs 1 \
+  --config config2.yaml \
+  --output_dir results_import_check
+```
+
+然后立刻评测：
+
+```bash
+python -m experiments.evaluate \
+  --task_id human_1 \
+  --runs_dir results_import_check \
+  --model_id deepseek-v4-flash
+```
+
+如果一个新导入任务能够完整跑通，那么剩下的大多数任务通常也能按同样逻辑接进去。
+
+### 数据导入后建议立刻跑的检查命令
+
+统计 `data/` 下有多少任务目录：
+
+```bash
+find data -mindepth 1 -maxdepth 1 -type d | wc -l
+```
+
+统计 `metric/` 下有多少评测目录：
+
+```bash
+find metric -mindepth 1 -maxdepth 1 -type d | wc -l
+```
+
+检查哪些 `data/` 任务没有对应的 `metric/`：
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  name=$(basename "$d")
+  [ -f "metric/$name/metric.yaml" ] || echo "missing metric: $name"
+done
+```
+
+检查哪些任务缺少 `gt/`：
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  [ -d "$d/gt" ] || echo "missing gt: $(basename "$d")"
+done
+```
+
+检查哪些任务缺少 `prompt.json`：
+
+```bash
+for d in data/*; do
+  [ -d "$d" ] || continue
+  [ -f "$d/prompt.json" ] || echo "missing prompt: $(basename "$d")"
+done
+```
+
+### 如果你下载到的数据本身不带 `gt/`
+
+这时你需要自己补出评测结构：
+
+1. 新建 `data/<task_id>/gt/`
+2. 把评测要用的标准输出文件放进去
+3. 修改 `metric/<task_id>/metric.yaml`，让每个 `ground_truth:` 指向相对于 `gt/` 的正确路径
+
+例如：
+
+```text
+data/human_8/gt/final_report.csv
+metric/human_8/metric.yaml
+```
+
+那么 `metric.yaml` 里可以写：
+
+```yaml
+ground_truth: final_report.csv
+```
+
+### 如果你下载到的是嵌套的 `gt/gt/`
+
+有些本地快照里可能会同时出现：
+
+```text
+data/<task_id>/gt/
+data/<task_id>/gt/gt/
+```
+
+但这个项目的评测器默认把：
+
+```text
+data/<task_id>/gt/
+```
+
+当作 ground-truth 根目录。
+
+所以更稳妥的做法是：
+
+- 真值文件直接放在 `data/<task_id>/gt/` 下
+- 除非你自己明确改过 `metric.yaml`，否则不要依赖 `gt/gt/`
+
 ### 数据准备里最常见的错误
 
 错误 1：
